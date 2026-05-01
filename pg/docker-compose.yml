@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  k-dontforget_postgres:
+    image: postgres:13
+    container_name: k-dontforget_postgres_db
+    environment:
+      POSTGRES_USER: K-DONTFORGET
+      POSTGRES_PASSWORD: K-dontforget123!
+      POSTGRES_DB: k-dontforget_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - k-dontforget_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  k-dontforget_postgres_data:
