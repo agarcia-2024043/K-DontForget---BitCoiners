@@ -1,0 +1,12 @@
+{"level":"error","message":"Error al crear cita: historyService.createHistory is not a function","timestamp":"2026-05-01T02:57:17.151Z"}
+{"level":"error","message":"500 - historyService.createHistory is not a function - /api/appointments - POST","timestamp":"2026-05-01T02:57:17.152Z"}
+{"level":"error","message":"Error al crear cita: El coordinador ya tiene una cita en ese horario","timestamp":"2026-05-01T02:58:50.886Z"}
+{"level":"error","message":"409 - El coordinador ya tiene una cita en ese horario - /api/appointments - POST","timestamp":"2026-05-01T02:58:50.887Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:02:18.161Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:02:18.162Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:02:34.652Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:02:34.653Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:02:53.184Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:02:53.185Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:03:10.067Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:03:10.067Z"}
