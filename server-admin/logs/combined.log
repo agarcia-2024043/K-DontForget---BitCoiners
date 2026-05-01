@@ -1,0 +1,31 @@
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:02.140Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:06.055Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:19.364Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:24.625Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:29.218Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:30.828Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:37.311Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:42.622Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:46.869Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:24:55.964Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T15:25:08.544Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-04-30T16:11:33.791Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-05-01T02:50:26.382Z"}
+{"level":"error","message":"Error al crear cita: historyService.createHistory is not a function","timestamp":"2026-05-01T02:57:17.151Z"}
+{"level":"error","message":"500 - historyService.createHistory is not a function - /api/appointments - POST","timestamp":"2026-05-01T02:57:17.152Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-05-01T02:58:38.550Z"}
+{"level":"error","message":"Error al crear cita: El coordinador ya tiene una cita en ese horario","timestamp":"2026-05-01T02:58:50.886Z"}
+{"level":"error","message":"409 - El coordinador ya tiene una cita en ese horario - /api/appointments - POST","timestamp":"2026-05-01T02:58:50.887Z"}
+{"level":"info","message":"Cita creada por usuario 738c07c3-340a-459e-a24d-f9aa6c2fa688","timestamp":"2026-05-01T03:01:26.139Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:02:18.161Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:02:18.162Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:02:34.652Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:02:34.653Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:02:53.184Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:02:53.185Z"}
+{"level":"error","message":"Error al obtener citas: Rol no autorizado para consultar citas","timestamp":"2026-05-01T03:03:10.067Z"}
+{"level":"error","message":"403 - Rol no autorizado para consultar citas - /api/appointments - GET","timestamp":"2026-05-01T03:03:10.067Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-05-01T03:04:37.732Z"}
+{"level":"info","message":"Cita 69f4168d7dfeb485b60a4bde actualizada por 738c07c3-340a-459e-a24d-f9aa6c2fa688","timestamp":"2026-05-01T03:06:40.964Z"}
+{"level":"info","message":"Cita 69f4168d7dfeb485b60a4bde cancelada por 738c07c3-340a-459e-a24d-f9aa6c2fa688","timestamp":"2026-05-01T03:08:07.892Z"}
+{"level":"info","message":"Job de recordatorios programado para las 8:00 AM diariamente.","timestamp":"2026-05-01T03:56:29.722Z"}
