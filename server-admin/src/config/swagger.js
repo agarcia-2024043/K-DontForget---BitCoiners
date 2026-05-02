@@ -37,8 +37,9 @@ const options = {
     ],
 
     tags: [
-      { name: 'Auth',          description: 'Autenticación — gestionada por el servicio .NET' },
+      { name: 'Health',        description: 'Estado del servidor y base de datos' },
       { name: 'Appointments',  description: 'CRUD de citas y gestión de estados' },
+      { name: 'History',       description: 'Historial de cambios de una cita' },
       { name: 'Coordinators',  description: 'Gestión de coordinadores y su disponibilidad' },
       { name: 'Parents',       description: 'Gestión de padres de familia' },
       { name: 'Notifications', description: 'Envío de correos y recordatorios automáticos' },
@@ -102,6 +103,35 @@ const options = {
             status: {
               type: 'string',
               enum: ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'],
+            },
+          },
+        },
+
+        AppointmentHistoryEntry: {
+          type: 'object',
+          properties: {
+            changedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-06-15T10:30:00Z',
+            },
+            changedBy: {
+              type: 'string',
+              example: 'uuid-del-usuario',
+            },
+            previousStatus: {
+              type: 'string',
+              enum: ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'],
+              example: 'PENDING',
+            },
+            newStatus: {
+              type: 'string',
+              enum: ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'],
+              example: 'CONFIRMED',
+            },
+            notes: {
+              type: 'string',
+              example: 'Cita confirmada por el coordinador',
             },
           },
         },
@@ -275,7 +305,11 @@ const options = {
     security: [{ bearerAuth: [] }],
   },
 
-  apis: [path.join(__dirname, '../routes/*.js')],
+
+  apis: [
+    path.join(__dirname, '../../index.js'),
+    path.join(__dirname, '../routes/*.js'),
+  ],
 };
 
 const specs = swaggerJsdoc(options);
@@ -306,6 +340,6 @@ export const setupSwagger = (app) => {
     res.send(specs);
   });
 
-  console.log(`📄 Swagger UI   → http://localhost:${process.env.PORT || 4000}/api-docs`);
-  console.log(`📦 Swagger JSON → http://localhost:${process.env.PORT || 4000}/api-docs.json`);
+  console.log(` Swagger UI   → http://localhost:${process.env.PORT || 4000}/api-docs`);
+  console.log(` Swagger JSON → http://localhost:${process.env.PORT || 4000}/api-docs.json`);
 };
