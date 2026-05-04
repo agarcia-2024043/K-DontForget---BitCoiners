@@ -13,8 +13,17 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Schedule K - Auth Service",
         Version = "v1",
-        Description = "Servicio de autenticación y manejo de recordatorios para Schedule K (Fundación Kinal)"
+        Description = "Servicio de autenticación y manejo de recordatorios para Schedule K (Fundación Kinal)",
+        Contact = new OpenApiContact
+        {
+            Name = "Equipo BitCoiners"
+        }
     });
+
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        c.IncludeXmlComments(xmlPath);
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
