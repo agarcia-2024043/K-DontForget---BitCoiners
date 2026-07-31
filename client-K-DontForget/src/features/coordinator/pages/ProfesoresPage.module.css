@@ -1,0 +1,248 @@
+.filtersSection {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.searchBox {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border: var(--border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--navy);
+}
+
+.filterSelect {
+  padding: 10px 16px;
+  border: var(--border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-white);
+  cursor: pointer;
+  outline: none;
+}
+
+.statsRow {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statNumber {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.professorCard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: white;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.headerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.professorName {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+.professorSubject {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.statusBadge.active {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.statusBadge.inactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.cardBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gradesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gradesLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.gradesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gradeTag {
+  padding: 4px 8px;
+  background: var(--bg-surface);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--text-primary);
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.infoIcon {
+  color: var(--navy);
+  flex-shrink: 0;
+}
+
+.infoText {
+  flex: 1;
+}
+
+.contactSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.contactIcon {
+  color: var(--navy);
+  flex-shrink: 0;
+}
+
+.contactValue {
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.actionsSection {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.actionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background: var(--navy);
+  color: white;
+  border-color: var(--navy);
+}
+
+.actionBtn.deleteBtn:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
