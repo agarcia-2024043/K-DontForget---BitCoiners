@@ -1,0 +1,114 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 40, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.modal {
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border);
+  animation: fadeScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface-2);
+}
+
+.modalHeader h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background: var(--bg-surface);
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+.form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  background: var(--bg-surface-2);
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--navy-light);
+  background: var(--bg-white);
+  box-shadow: 0 0 0 3px rgba(28, 107, 189, 0.12);
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.formActions button {
+  flex: 1;
+}

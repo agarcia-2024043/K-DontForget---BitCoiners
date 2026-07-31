@@ -1,0 +1,59 @@
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.summaryCard {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryValue {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.summaryLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .chartsGrid { grid-template-columns: 1fr; }
+}
+
+.chartTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.periodFilter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  color: var(--text-secondary);
+}
+
+.periodFilter select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+}
