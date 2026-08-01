@@ -1,13 +1,7 @@
+using AuthService.Application.DTOs;
+using AuthService.Application.Interfaces;
+using AuthService.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AuthService.Api.DTOs;
-using AuthService.Api.Services;
-using AuthService.Api.Data;
-using AuthService.Api.Models;
 
 namespace AuthService.Api.Controllers;
 
@@ -21,15 +15,15 @@ namespace AuthService.Api.Controllers;
 [Tags("Auth")]
 public class AuthController : ControllerBase
 {
-    private readonly AuthDbContext _context;
-    private readonly IEmailService _emailService;
+    private readonly IAuthService _authService;
     private readonly IConfiguration _config;
+    private readonly IUserRepository _userRepository;
 
-    public AuthController(AuthDbContext context, IEmailService emailService, IConfiguration config)
+    public AuthController(IAuthService authService, IConfiguration config, IUserRepository userRepository)
     {
-        _context = context;
-        _emailService = emailService;
+        _authService = authService;
         _config = config;
+        _userRepository = userRepository;
     }
 
     /// <summary>
@@ -62,74 +56,28 @@ public class AuthController : ControllerBase
     /// </remarks>
     /// <param name="request">Datos de registro del usuario.</param>
     /// <returns>Confirmación de registro o error.</returns>
-    /// <response code="200">Registro exitoso. Padre: se envía correo de verificación. Coordinador: verificado inmediatamente.</response>
+    /// <response code="200">Registro exitoso.</response>
     /// <response code="400">Datos inválidos, usuario ya existente o código secreto incorrecto.</response>
     [HttpPost("register")]
-    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorDetailResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            var errores = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToArray();
-            return BadRequest(new { message = "Datos inválidos.", detalles = errores });
-        }
+        var baseUrl = _config["ApplicationUrl"];
+        var result = await _authService.RegisterAsync(request, baseUrl);
 
-        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-            return BadRequest(new { message = "El usuario ya existe." });
+        if (!result.Success)
+            return BadRequest(new { message = result.Message });
 
-        bool isCoordinator = request.Role == "Coordinador";
-        if (isCoordinator)
-        {
-            var secret = _config["Security:CoordinatorSecret"];
-            if (string.IsNullOrWhiteSpace(request.SecretCode) || request.SecretCode != secret)
-                return BadRequest(new { message = "Código secreto de coordinador inválido." });
-        }
+        if (result.VerificationLink != null)
+            return Ok(new { message = result.Message, verificationLink = result.VerificationLink, error = result.Error, verificationToken = result.VerificationToken });
 
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Email = request.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            Role = request.Role,
-            IsVerified = isCoordinator,
-            VerificationToken = isCoordinator ? null : Guid.NewGuid().ToString()
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        if (isCoordinator)
-            return Ok(new { message = "Coordinador registrado y verificado correctamente. Ya puedes iniciar sesión." });
-
-        var baseUrl = _config["ApplicationUrl"] ?? "http://localhost:5065";
-        var link = $"{baseUrl.TrimEnd('/')}/api/auth/verify?token={user.VerificationToken}";
-
-        try
-        {
-            await _emailService.SendVerificationEmail(user.Email, user.VerificationToken!);
-            return Ok(new { message = "Registro exitoso. Revisa tu correo para verificar tu cuenta." });
-        }
-        catch (Exception ex)
-        {
-            return Ok(new { message = "Registro ok, pero falló el correo.", verificationLink = link, error = ex.Message });
-        }
+        return Ok(new { message = result.Message });
     }
 
     /// <summary>
     /// Verificar la cuenta de un Padre mediante el token enviado por correo.
     /// </summary>
-    /// <remarks>
-    /// Este endpoint es el enlace que recibe el Padre en su correo de verificación.
-    ///
-    /// Ejemplo:
-    /// ```
-    /// GET /api/auth/verify?token=abc123def456
-    /// ```
-    /// </remarks>
     /// <param name="token">Token de verificación enviado al correo del usuario.</param>
     /// <returns>Confirmación de verificación o error.</returns>
     /// <response code="200">Cuenta verificada correctamente.</response>
@@ -139,18 +87,12 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Verify(string token)
     {
-        if (string.IsNullOrWhiteSpace(token)) return BadRequest("Token requerido.");
+        var result = await _authService.VerifyEmailAsync(token);
 
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.VerificationToken == token.Trim());
+        if (!result.Success)
+            return BadRequest(result.Message);
 
-        if (user == null) return BadRequest("Token inválido.");
-
-        user.IsVerified = true;
-        user.VerificationToken = null;
-        await _context.SaveChangesAsync();
-
-        return Ok("Cuenta verificada correctamente");
+        return Ok(result.Message);
     }
 
     /// <summary>
@@ -166,18 +108,6 @@ public class AuthController : ControllerBase
     ///   "password": "MiClave123"
     /// }
     /// </code>
-    ///
-    /// Ejemplo de respuesta exitosa:
-    /// <code>
-    /// {
-    ///   "message": "Login exitoso",
-    ///   "token": "eyJhbGciOiJIUzI1NiIs...",
-    ///   "user": {
-    ///     "email": "padre@kinal.edu.gt",
-    ///     "role": "Padre"
-    ///   }
-    /// }
-    /// </code>
     /// </remarks>
     /// <param name="request">Credenciales del usuario.</param>
     /// <returns>Token JWT y datos del usuario autenticado.</returns>
@@ -185,48 +115,23 @@ public class AuthController : ControllerBase
     /// <response code="401">Credenciales incorrectas o cuenta no verificada.</response>
     /// <response code="500">Error interno al generar el token.</response>
     [HttpPost("login")]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            return Unauthorized(new { message = "Credenciales incorrectas." });
-
-        if (!user.IsVerified)
-            return Unauthorized(new { message = "Cuenta no verificada. Revisa tu correo." });
-
         try
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var keyString = _config["Jwt:Key"] ?? "Qu3_R3gr353_3I_Mauu_La_Un0_m0n3da";
-            var key = Encoding.UTF8.GetBytes(keyString);
+            var result = await _authService.LoginAsync(request);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            if (!result.Success)
+                return Unauthorized(new { message = result.Message });
+
+            return Ok(new
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("id", user.Id.ToString()),
-                    new Claim("email", user.Email),
-                    new Claim("role", user.Role)
-                }),
-                Expires = DateTime.UtcNow.AddHours(8),
-                Issuer = _config["Jwt:Issuer"] ?? "AuthService",
-                Audience = _config["Jwt:Audience"] ?? "ScheduleK_Clients",
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            return Ok(new {
-                message = "Login exitoso",
-                token = tokenString,
-                user = new { user.Email, user.Role }
+                message = result.Message,
+                token = result.Token,
+                user = new { nombre = result.Email, role = result.Role, phoneNumber = result.PhoneNumber }
             });
         }
         catch (Exception ex)
@@ -234,38 +139,69 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Error al generar el token", details = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Iniciar sesión o registrarse con Google.
+    /// </summary>
+    [HttpPost("google")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GoogleLogin([FromBody] ExternalLoginRequest request)
+    {
+        var result = await _authService.LoginWithGoogleAsync(request.Token);
+        if (!result.Success)
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new
+        {
+            message = result.Message,
+            token = result.Token,
+            user = new { nombre = result.Email, role = result.Role }
+        });
+    }
+
+    /// <summary>
+    /// Iniciar sesión o registrarse con Microsoft.
+    /// </summary>
+    [HttpPost("microsoft")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> MicrosoftLogin([FromBody] ExternalLoginRequest request)
+    {
+        var result = await _authService.LoginWithMicrosoftAsync(request.Token);
+        if (!result.Success)
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new
+        {
+            message = result.Message,
+            token = result.Token,
+            user = new { nombre = result.Email, role = result.Role }
+        });
+    }
+    /// <summary>
+    /// Obtener datos del usuario autenticado (incluyendo teléfono).
+    /// </summary>
+    /// <returns>Datos del usuario autenticado.</returns>
+    /// <response code="200">Datos del usuario retornados correctamente.</response>
+    /// <response code="404">Usuario no encontrado.</response>
+    [HttpGet("me/{email}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMe(string email)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+            return NotFound(new { message = "Usuario no encontrado." });
+
+        return Ok(new
+        {
+            id = user.Id,
+            email = user.Email,
+            role = user.Role,
+            phoneNumber = user.PhoneNumber,
+            nombreEncargado = user.NombreEncargado,
+            apellidoEncargado = user.ApellidoEncargado
+        });
+    }
 }
-
-// ── Response models ──────────────────────────────────────────────────────────
-
-/// <summary>Respuesta con mensaje simple.</summary>
-public record MessageResponse(
-    /// <summary>Mensaje descriptivo del resultado.</summary>
-    string Message
-);
-
-/// <summary>Respuesta de error con detalle de validación.</summary>
-public record ErrorDetailResponse(
-    /// <summary>Mensaje de error.</summary>
-    string Message,
-    /// <summary>Lista de errores de validación.</summary>
-    string[] Detalles
-);
-
-/// <summary>Respuesta exitosa de login.</summary>
-public record LoginResponse(
-    /// <summary>Mensaje de confirmación.</summary>
-    string Message,
-    /// <summary>Token JWT generado (válido 8 horas).</summary>
-    string Token,
-    /// <summary>Datos básicos del usuario autenticado.</summary>
-    UserInfo User
-);
-
-/// <summary>Datos básicos del usuario autenticado.</summary>
-public record UserInfo(
-    /// <summary>Email del usuario.</summary>
-    string Email,
-    /// <summary>Rol del usuario (Padre o Coordinador).</summary>
-    string Role
-);
