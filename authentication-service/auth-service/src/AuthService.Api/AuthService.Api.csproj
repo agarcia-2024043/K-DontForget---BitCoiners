@@ -25,4 +25,10 @@
     <ProjectReference Include="..\AuthService.Persistence\AuthService.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+  <Content Include="logo.png">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
+
 </Project>
