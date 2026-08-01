@@ -9,6 +9,7 @@ public class User
     public bool IsVerified { get; set; } = false;
     public string? VerificationToken { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
 
     public User()
     {
