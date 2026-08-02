@@ -1,29 +1,24 @@
 import mongoose from "mongoose";
 
-const appointmentHistorySchema = new mongoose.Schema({
-  appointmentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Appointment",
-    required: true,
+const appointmentHistorySchema = new mongoose.Schema(
+  {
+    appointmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Appointment",
+      required: true,
+      index: true,
+    },
+    action: {
+      type: String,
+      enum: ["CREATED", "UPDATED", "CONFIRMED", "CANCELLED", "COMPLETED"],
+      required: true,
+    },
+    performedBy: {
+      type: String,
+      required: true,
+    },
   },
-  action: {
-    type: String,
-    enum: ["CREATED", "UPDATED", "CANCELLED", "CONFIRMED", "COMPLETED"],
-    required: true,
-  },
-  performedBy: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-const AppointmentHistory = mongoose.model(
-  "AppointmentHistory",
-  appointmentHistorySchema
+  { timestamps: true }
 );
 
-export default AppointmentHistory;
+export default mongoose.model("AppointmentHistory", appointmentHistorySchema);
