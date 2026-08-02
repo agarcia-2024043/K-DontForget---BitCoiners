@@ -1,4 +1,4 @@
-namespace AuthService.Api.Models;
+namespace AuthService.Domain.Entities;
 
 public class User
 {
@@ -10,6 +10,12 @@ public class User
     public string? VerificationToken { get; set; }
     public DateTime CreatedAt { get; set; }
     public string PhoneNumber { get; set; } = string.Empty;
+    
+    public string NombreEncargado { get; set; } = string.Empty;
+    public string ApellidoEncargado { get; set; } = string.Empty;
+    public string NombreEstudiante { get; set; } = string.Empty;
+    public string CarnetEstudiante { get; set; } = string.Empty;
+    public string SeccionTecnica { get; set; } = string.Empty;
 
     public User()
     {

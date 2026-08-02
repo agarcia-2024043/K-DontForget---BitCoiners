@@ -1,7 +1,9 @@
+using AuthService.Application.Interfaces;
+using AuthService.Application.Services;
+using AuthService.Persistence.Data;
+using AuthService.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using AuthService.Api.Data;
-using AuthService.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +16,7 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Schedule K - Auth Service",
         Version = "v1",
         Description = "Servicio de autenticación y manejo de recordatorios para Schedule K (Fundación Kinal)",
-        Contact = new OpenApiContact
-        {
-            Name = "Equipo BitCoiners"
-        }
+        Contact = new OpenApiContact { Name = "Equipo BitCoiners" }
     });
 
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -48,16 +47,40 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<IEmailService, EmailService>();
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
+// DbContext
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IReminderRepository, ReminderRepository>();
+
+// Services
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
+builder.Services.AddScoped<IReminderService, ReminderService>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+    // Ensure database is created without deleting existing records
     db.Database.EnsureCreated();
+    await DataSeeder.SeedCoordinatorsAsync(db);
 }
 
 app.UseSwagger();
@@ -67,7 +90,8 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger";
 });
 
-app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+// app.UseHttpsRedirection(); // Disabled for development
 app.MapControllers();
 
 app.Run();

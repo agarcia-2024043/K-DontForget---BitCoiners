@@ -28,29 +28,7 @@ public class EmailService : IEmailService
         var baseUrl = _config["ApplicationUrl"] ?? "http://localhost:5065";
         var link = $"{baseUrl.TrimEnd('/')}/api/auth/verify?token={token}";
 
-        // Ruta del logo — pon tu archivo logo.jpg en la misma carpeta que EmailService.cs
-        // Esto busca el archivo en la carpeta raíz donde corre el .exe
-var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "authentication-service/auth-service/src/AuthService.Api/Services/logo.jpg");
-
-// LOG DE DEPURACIÓN: Agrega esto para ver exactamente dónde está buscando el programa
-_logger.LogInformation("Buscando logo en: {Path}", logoPath);
-
-var hasLogo = File.Exists(logoPath);
-if (!hasLogo) 
-{
-    _logger.LogWarning("¡Atención! El archivo de logo no se encontró en la ruta especificada.");
-}
-
         var builder = new BodyBuilder();
-
-        string logoTag = "";
-        if (hasLogo)
-        {
-            var image = builder.LinkedResources.Add(logoPath);
-            image.ContentId = MimeUtils.GenerateMessageId();
-            logoTag = $"<img src='cid:{image.ContentId}' alt='K-DontForget' style='height:60px;margin-bottom:10px;'><br>";
-        }
-
         builder.HtmlBody = $@"
 <!DOCTYPE html>
 <html lang='es'>
@@ -69,7 +47,6 @@ if (!hasLogo)
             <!-- Header dorado -->
             <tr>
                 <td style='background:linear-gradient(135deg,#C9A84C,#a0722a);padding:36px 40px;text-align:center;'>
-                {logoTag}
                 <h1 style='margin:0;color:#ffffff;font-size:26px;letter-spacing:1px;'>K-DontForget</h1>
                 <p style='margin:6px 0 0;color:#f5e6c0;font-size:13px;'>Sistema de Gestión de Citas · Fundación Kinal</p>
                 </td>
