@@ -1,15 +1,14 @@
-import { createLogger, format, transports } from "winston";
+import winston from "winston";
 
-const logger = createLogger({
+const logger = winston.createLogger({
   level: "info",
-  format: format.combine(
-    format.timestamp(),
-    format.json()
+  format: winston.format.combine(
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.printf(({ timestamp, level, message }) => `[${timestamp}] ${level.toUpperCase()}: ${message}`)
   ),
   transports: [
-    new transports.File({ filename: "logs/error.log", level: "error" }),
-    new transports.File({ filename: "logs/combined.log" }),
-    new transports.Console()
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "logs/app.log", maxsize: 5242880, maxFiles: 3 }),
   ],
 });
 

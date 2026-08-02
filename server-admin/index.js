@@ -4,23 +4,26 @@ import cors from "cors";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import { connectDB } from "./src/config/db.js";
-import appointmentRoutes from "./src/routes/appointment.routes.js";
-import errorHandler from "./src/middlewares/error.middleware.js";
 import { setupSwagger } from "./src/config/swagger.js";
-import appointmentHistoryRoutes from "./src/routes/appointmentHistory.routes.js";
+import errorHandler from "./src/middlewares/error.middleware.js";
 import { initReminderJob } from "./src/services/reminder.service.js";
+
+// Rutas
+import appointmentRoutes from "./src/routes/appointment.routes.js";
+import appointmentHistoryRoutes from "./src/routes/appointmentHistory.routes.js";
+import notificationRoutes from "./src/routes/notification.routes.js";
+import coordinatorScheduleRoutes from "./src/routes/coordinatorSchedule.routes.js";
+import teacherRoutes from "./src/routes/teacher.routes.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-
+// Middlewares globales
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-
-
 
 /**
  * @swagger
@@ -32,14 +35,6 @@ app.use(express.json());
  *     responses:
  *       200:
  *         description: API funcionando
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: API funcionando correctamente
  */
 app.get("/", (req, res) => {
   res.json({ message: "API funcionando correctamente" });
@@ -55,29 +50,6 @@ app.get("/", (req, res) => {
  *     responses:
  *       200:
  *         description: Estado actual del servicio
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 server:
- *                   type: string
- *                   example: OK
- *                 database:
- *                   type: string
- *                   enum: [Desconectado, Conectado, Conectando, Desconectándose]
- *                   example: Conectado
- *                 uptime:
- *                   type: number
- *                   description: Segundos que lleva corriendo el proceso
- *                   example: 3600.25
- *                 timestamp:
- *                   type: string
- *                   format: date-time
- *                   example: '2025-06-15T10:00:00.000Z'
  */
 app.get("/health", (req, res) => {
   const dbState = mongoose.connection.readyState;
@@ -97,17 +69,20 @@ app.get("/health", (req, res) => {
   });
 });
 
-
+// Rutas de la API
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/history", appointmentHistoryRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/schedules", coordinatorScheduleRoutes);
+app.use("/api/teachers", teacherRoutes);
 
-
+// Swagger
 setupSwagger(app);
 
-
+// Error handler (debe ir al final)
 app.use(errorHandler);
 
-
+// Iniciar servidor
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
