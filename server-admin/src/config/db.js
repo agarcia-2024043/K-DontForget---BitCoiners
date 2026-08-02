@@ -1,21 +1,13 @@
 import mongoose from "mongoose";
+import logger from "./logger.js";
 
 export const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-
-    console.log("Base de datos conectada correctamente");
-
-    mongoose.connection.on("error", (err) => {
-      console.error("Error en la base de datos:", err.message);
-    });
-
-    mongoose.connection.on("disconnected", () => {
-      console.log("Base de datos desconectada");
-    });
-
+    const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/k-dontforget";
+    await mongoose.connect(uri);
+    logger.info(`MongoDB conectado: ${mongoose.connection.host}`);
   } catch (error) {
-    console.error("Error al conectar a la base de datos:", error.message);
+    logger.error(`Error conectando a MongoDB: ${error.message}`);
     process.exit(1);
   }
 };
