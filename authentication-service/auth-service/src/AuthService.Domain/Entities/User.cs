@@ -1,0 +1,24 @@
+namespace AuthService.Domain.Entities;
+
+public class User
+{
+    public Guid Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public bool IsVerified { get; set; } = false;
+    public string? VerificationToken { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
+    
+    public string NombreEncargado { get; set; } = string.Empty;
+    public string ApellidoEncargado { get; set; } = string.Empty;
+    public string NombreEstudiante { get; set; } = string.Empty;
+    public string CarnetEstudiante { get; set; } = string.Empty;
+    public string SeccionTecnica { get; set; } = string.Empty;
+
+    public User()
+    {
+        CreatedAt = DateTime.UtcNow;
+    }
+}
